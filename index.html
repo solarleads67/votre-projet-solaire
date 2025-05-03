@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Solaire</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 50px;
+        }
+        h1 {
+            color: #33cc33;
+            text-align: center;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button {
+            background-color: #33cc33;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .button:hover {
+            background-color: #28a828;
+        }
+        .message {
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .qualifie {
+            background-color: #28a828;
+            color: white;
+        }
+        .non-qualifie {
+            background-color: #d9534f;
+            color: white;
+        }
+        .non-eligible {
+            background-color: #ff851b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulation Solaire</h1>
+    <div class="form-container">
+        <form id="solarForm">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="facture">Facture mensuelle d'électricité (€) :</label>
+            <input type="number" id="facture" name="facture" required>
+
+            <label for="orientation">Orientation du toit :</label>
+            <select id="orientation" name="orientation" required>
+                <option value="Sud">Sud</option>
+                <option value="Est">Est</option>
+                <option value="Ouest">Ouest</option>
+                <option value="Nord">Nord</option>
+            </select>
+
+            <label for="ombrage">Toiture ombragée ?</label>
+            <select id="ombrage" name="ombrage" required>
+                <option value="Non">Non</option>
+                <option value="Oui">Oui</option>
+            </select>
+
+            <label for="codePostal">Code Postal :</label>
+            <input type="text" id="codePostal" name="codePostal" required>
+
+            <button type="submit" class="button">Simuler</button>
+        </form>
+        <div id="result" class="message"></div>
+    </div>
+
+    <script>
+        document.getElementById("solarForm").addEventListener("submit", function(event){
+            event.preventDefault();
+
+            const facture = parseFloat(document.getElementById("facture").value);
+            const orientation = document.getElementById("orientation").value;
+            const ombrage = document.getElementById("ombrage").value;
+            const codePostal = document.getElementById("codePostal").value;
+            const resultDiv = document.getElementById("result");
+
+            let message = "";
+            let className = "";
+
+            // Vérification du code postal (départements 67 et 57)
+            const departementsValides = ["67", "57"];
+            const codePostalDepartement = codePostal.substring(0, 2);
+
+            if (!departementsValides.includes(codePostalDepartement)) {
+                message = "Désolé, nous ne proposons pas encore nos services dans votre département.";
+                className = "non-eligible";
+            } else {
+                // Critères de qualification pour le solaire
+                if (facture >= 100 && (orientation === "Sud" || orientation === "Est" || orientation === "Ouest") && ombrage === "Non") {
+                    message = "Félicitations ! Vous êtes un client idéal pour l'installation de panneaux solaires. Votre facture est élevée, votre toit est bien orienté et non ombragé.";
+                    className = "qualifie";
+                } else {
+                    message = "Désolé, mais votre toit ne semble pas optimal pour l'installation de panneaux solaires. Nous vous conseillons de nous recontacter plus tard ou d'explorer d'autres solutions.";
+                    className = "non-qualifie";
+                }
+            }
+
+            resultDiv.className = "message " + className;
+            resultDiv.textContent = message;
+        });
+    </script>
+</body>
+</html>
